@@ -1,0 +1,981 @@
+---
+import Layout from '@/layouts/Layout.astro'
+
+interface WizardStep {
+  id: string
+  numero: number
+  etiqueta: string
+}
+
+const pasos: WizardStep[] = [
+  { id: 'informacion', numero: 1, etiqueta: 'Información' },
+  { id: 'contenido', numero: 2, etiqueta: 'Contenido' },
+  { id: 'multimedia', numero: 3, etiqueta: 'Multimedia' },
+  { id: 'publicar', numero: 4, etiqueta: 'Publicar' },
+]
+
+const fechaHoy = new Date().toLocaleDateString('es-MX', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+})
+---
+
+<Layout
+  title="Nueva Publicación"
+  pageTitle="Nueva Publicación"
+  pageSubtitle="Completa los campos para redactar y publicar una nota informativa en el portal del ITH"
+>
+  <div slot="topbar-actions" class="flex items-center gap-2.5">
+    <button
+      id="btnGuardarBorrador"
+      type="button"
+      class="border-border text-text-main hover:bg-bg flex items-center gap-2 rounded-lg border bg-transparent px-4 py-2 text-sm font-medium transition-all active:scale-95"
+    >
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"></path>
+        <polyline points="17,21 17,13 7,13 7,21"></polyline>
+        <polyline points="7,3 7,8 15,8"></polyline>
+      </svg>
+      Guardar borrador
+    </button>
+    <button
+      id="btnPrevisualizar"
+      type="button"
+      class="bg-ith-azul-light text-ith-azul flex items-center gap-2 rounded-lg border-none px-4 py-2 text-sm font-medium transition-all active:scale-95"
+    >
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"></path>
+        <circle cx="12" cy="12" r="3"></circle>
+      </svg>
+      Previsualizar
+    </button>
+  </div>
+
+  <div class="mb-6 flex items-center gap-1.5 text-sm">
+    <a href="/dashboard" class="text-text-muted hover:text-ith-azul no-underline">Dashboard</a>
+    <span class="text-text-muted">›</span>
+    <span class="text-text-main font-medium">Nueva Publicación</span>
+  </div>
+
+  <ol id="wizardStepper" class="mb-8 flex items-center">
+    {
+      pasos.map((paso, index) => (
+        <li class="flex flex-1 items-center last:flex-none">
+          <button
+            type="button"
+            data-step={paso.id}
+            data-index={index}
+            class="step-trigger flex shrink-0 cursor-pointer items-center gap-2.5 border-none bg-transparent p-0"
+          >
+            <span
+              class="step-circle flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-semibold"
+              data-circle
+            >
+              {paso.numero}
+            </span>
+            <span class="step-label text-sm" data-label>
+              {paso.etiqueta}
+            </span>
+          </button>
+          {index < pasos.length - 1 && (
+            <span class="step-connector mx-3 h-0.5 flex-1 rounded-full" data-connector />
+          )}
+        </li>
+      ))
+    }
+  </ol>
+
+  <div class="grid grid-cols-1 items-start gap-6 lg:grid-cols-[1fr_320px]">
+    <div class="flex flex-col gap-6">
+      <!-- Paso 1: Información -->
+      <section data-panel="informacion" class="wizard-panel hidden flex-col gap-6">
+        <div class="bg-surface border-border rounded-2xl border p-6">
+          <div class="border-border mb-5 flex items-center gap-2.5 border-b pb-4">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              class="text-ith-azul"
+            >
+              <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            <h2 class="text-ith-azul font-serif text-lg">Datos generales</h2>
+          </div>
+
+          <div class="mb-5">
+            <label
+              for="campoCategoria"
+              class="text-text-muted mb-1.5 block text-xs font-semibold tracking-wide uppercase"
+            >
+              Categoría
+            </label>
+            <select
+              id="campoCategoria"
+              class="border-border bg-bg text-text-main w-full rounded-lg border px-3.5 py-2.5 text-sm focus:outline-none"
+            >
+              <option value="logros">Logros y reconocimientos</option>
+              <option value="convocatorias">Convocatorias</option>
+              <option value="convenios">Convenios institucionales</option>
+              <option value="avisos">Avisos administrativos</option>
+              <option value="eventos">Eventos</option>
+            </select>
+          </div>
+
+          <div>
+            <label
+              for="campoResumen"
+              class="text-text-muted mb-1.5 block text-xs font-semibold tracking-wide uppercase"
+            >
+              Resumen breve
+            </label>
+            <textarea
+              id="campoResumen"
+              rows="3"
+              placeholder="Una o dos líneas que describan la publicación…"
+              class="border-border bg-bg text-text-main placeholder:text-text-muted/60 w-full resize-none rounded-lg border px-3.5 py-2.5 text-sm focus:outline-none"
+            ></textarea>
+          </div>
+        </div>
+      </section>
+
+      <!-- Paso 2: Contenido -->
+      <section data-panel="contenido" class="wizard-panel flex flex-col gap-6">
+        <div class="bg-surface border-border rounded-2xl border p-6">
+          <div class="border-border mb-5 flex items-center gap-2.5 border-b pb-4">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              class="text-ith-azul"
+            >
+              <polyline points="4,7 4,4 20,4 20,7"></polyline>
+              <line x1="9" y1="20" x2="15" y2="20"></line>
+              <line x1="12" y1="4" x2="12" y2="20"></line>
+            </svg>
+            <h2 class="text-ith-azul font-serif text-lg">Encabezado de la nota</h2>
+          </div>
+
+          <div>
+            <div class="mb-1.5 flex items-center justify-between">
+              <label
+                for="campoTitulo"
+                class="text-text-muted text-xs font-semibold tracking-wide uppercase"
+              >
+                Título de la publicación
+              </label>
+              <span
+                class="bg-ith-naranja/10 text-ith-naranja rounded px-1.5 py-0.5 text-xs font-medium"
+              >
+                Requerido
+              </span>
+            </div>
+            <input
+              id="campoTitulo"
+              type="text"
+              maxlength="200"
+              placeholder="Ej. Alumnos del ITH ganan primer lugar en concurso regional de robótica"
+              class="border-border bg-bg text-text-main placeholder:text-text-muted/60 w-full rounded-lg border px-3.5 py-2.5 text-sm focus:outline-none"
+            />
+            <p class="text-text-muted mt-1.5 text-right text-xs">
+              <span id="contadorTitulo">0</span> / 200
+            </p>
+          </div>
+        </div>
+
+        <div class="bg-surface border-border rounded-2xl border p-6">
+          <div class="border-border mb-5 flex items-center gap-2.5 border-b pb-4">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              class="text-ith-azul"
+            >
+              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"></path>
+              <polyline points="14,2 14,8 20,8"></polyline>
+              <line x1="8" y1="13" x2="16" y2="13"></line>
+              <line x1="8" y1="17" x2="16" y2="17"></line>
+            </svg>
+            <h2 class="text-ith-azul font-serif text-lg">Cuerpo de la nota (Copy)</h2>
+          </div>
+
+          <div class="mb-1.5 flex items-center justify-between">
+            <label class="text-text-muted text-xs font-semibold tracking-wide uppercase"
+              >¿Qué se hizo?</label
+            >
+            <span
+              class="bg-ith-naranja/10 text-ith-naranja rounded px-1.5 py-0.5 text-xs font-medium"
+            >
+              Requerido
+            </span>
+          </div>
+
+          <div class="border-border overflow-hidden rounded-lg border">
+            <div class="border-border bg-bg flex items-center gap-1 border-b p-2">
+              <button
+                type="button"
+                data-cmd="bold"
+                title="Negrita"
+                aria-label="Negrita"
+                class="toolbar-btn flex h-7 w-7 items-center justify-center rounded font-bold"
+                >B</button
+              >
+              <button
+                type="button"
+                data-cmd="italic"
+                title="Cursiva"
+                aria-label="Cursiva"
+                class="toolbar-btn flex h-7 w-7 items-center justify-center rounded italic"
+                >I</button
+              >
+              <button
+                type="button"
+                data-cmd="underline"
+                title="Subrayado"
+                aria-label="Subrayado"
+                class="toolbar-btn flex h-7 w-7 items-center justify-center rounded underline"
+                >U</button
+              >
+              <span class="bg-border mx-1 h-5 w-px"></span>
+              <button
+                type="button"
+                data-cmd="insertUnorderedList"
+                title="Lista con viñetas"
+                aria-label="Lista con viñetas"
+                class="toolbar-btn flex h-7 w-7 items-center justify-center rounded"
+              >
+                <svg
+                  width="15"
+                  height="15"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  ><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"
+                  ></line><line x1="8" y1="18" x2="21" y2="18"></line><line
+                    x1="3"
+                    y1="6"
+                    x2="3.01"
+                    y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line
+                    x1="3"
+                    y1="18"
+                    x2="3.01"
+                    y2="18"></line></svg
+                >
+              </button>
+              <button
+                type="button"
+                data-cmd="insertOrderedList"
+                title="Lista numerada"
+                aria-label="Lista numerada"
+                class="toolbar-btn flex h-7 w-7 items-center justify-center rounded text-xs font-semibold"
+                >1.</button
+              >
+              <span class="bg-border mx-1 h-5 w-px"></span>
+              <button
+                type="button"
+                data-cmd="formatBlock:blockquote"
+                title="Cita"
+                aria-label="Insertar cita"
+                class="toolbar-btn flex h-7 w-7 items-center justify-center rounded"
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"
+                  ><rect x="3" y="7" width="8" height="8" rx="1"></rect></svg
+                >
+              </button>
+              <button
+                type="button"
+                data-cmd="justifyFull"
+                title="Justificar"
+                aria-label="Justificar texto"
+                class="toolbar-btn flex h-7 w-7 items-center justify-center rounded"
+              >
+                <svg
+                  width="15"
+                  height="15"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  ><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"
+                  ></line><line x1="3" y1="18" x2="21" y2="18"></line></svg
+                >
+              </button>
+            </div>
+            <div
+              id="campoCuerpo"
+              contenteditable="true"
+              data-placeholder="Describe el evento o logro que se difundirá…"
+              class="text-text-main min-h-40 px-4 py-3.5 text-sm leading-relaxed focus:outline-none"
+            >
+            </div>
+          </div>
+
+          <div class="mt-5">
+            <div class="mb-1.5 flex items-center justify-between">
+              <label
+                for="campoComo"
+                class="text-text-muted text-xs font-semibold tracking-wide uppercase"
+              >
+                ¿Cómo se realizó?
+              </label>
+              <span class="bg-bg text-text-muted rounded px-1.5 py-0.5 text-xs font-medium">
+                Opcional
+              </span>
+            </div>
+            <textarea
+              id="campoComo"
+              rows="3"
+              placeholder="Contexto y detalles del desarrollo…"
+              class="border-border bg-bg text-text-main placeholder:text-text-muted/60 w-full resize-none rounded-lg border px-3.5 py-2.5 text-sm focus:outline-none"
+            ></textarea>
+          </div>
+
+          <div class="mt-5">
+            <div class="mb-1.5 flex items-center justify-between">
+              <label
+                for="campoParaQue"
+                class="text-text-muted text-xs font-semibold tracking-wide uppercase"
+              >
+                ¿Para qué se hizo?
+              </label>
+              <span class="bg-bg text-text-muted rounded px-1.5 py-0.5 text-xs font-medium">
+                Opcional
+              </span>
+            </div>
+            <textarea
+              id="campoParaQue"
+              rows="3"
+              placeholder="Objetivo, impacto o beneficio para la comunidad ITH…"
+              class="border-border bg-bg text-text-main placeholder:text-text-muted/60 w-full resize-none rounded-lg border px-3.5 py-2.5 text-sm focus:outline-none"
+            ></textarea>
+          </div>
+        </div>
+
+        <div class="bg-surface border-border rounded-2xl border p-6">
+          <div class="border-border mb-5 flex items-center gap-2.5 border-b pb-4">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              class="text-ith-azul"
+            >
+              <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"></path>
+              <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"></path>
+            </svg>
+            <h2 class="text-ith-azul font-serif text-lg">Enlace relacionado</h2>
+          </div>
+
+          <div>
+            <div class="mb-1.5 flex items-center justify-between">
+              <label
+                for="campoUrl"
+                class="text-text-muted text-xs font-semibold tracking-wide uppercase"
+              >
+                URL de referencia
+              </label>
+              <span class="bg-bg text-text-muted rounded px-1.5 py-0.5 text-xs font-medium">
+                Opcional
+              </span>
+            </div>
+            <div class="relative">
+              <span class="text-text-muted absolute top-1/2 left-3.5 -translate-y-1/2">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                >
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="2" y1="12" x2="22" y2="12"></line>
+                  <path d="M12 2a15.3 15.3 0 010 20 15.3 15.3 0 010-20z"></path>
+                </svg>
+              </span>
+              <input
+                id="campoUrl"
+                type="url"
+                placeholder="https://ith.mx/convocatoria"
+                class="border-border bg-bg text-text-main placeholder:text-text-muted/60 w-full rounded-lg border py-2.5 pr-3.5 pl-10 text-sm focus:outline-none"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Paso 3: Multimedia -->
+      <section data-panel="multimedia" class="wizard-panel hidden flex-col gap-6">
+        <div class="bg-surface border-border rounded-2xl border p-6">
+          <div class="border-border mb-5 flex items-center gap-2.5 border-b pb-4">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              class="text-ith-azul"
+            >
+              <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+              <circle cx="8.5" cy="8.5" r="1.5"></circle>
+              <polyline points="21,15 16,10 5,21"></polyline>
+            </svg>
+            <h2 class="text-ith-azul font-serif text-lg">Imágenes de la publicación</h2>
+          </div>
+
+          <label
+            for="campoImagenes"
+            class="border-border hover:border-ith-azul/40 hover:bg-bg flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed py-10 text-center transition-colors"
+          >
+            <svg
+              width="28"
+              height="28"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              class="text-text-muted"
+            >
+              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"></path>
+              <polyline points="17,8 12,3 7,8"></polyline>
+              <line x1="12" y1="3" x2="12" y2="15"></line>
+            </svg>
+            <span class="text-text-main text-sm">
+              Arrastra tus imágenes aquí o <span class="text-ith-azul font-medium underline"
+                >selecciona archivos</span
+              >
+            </span>
+            <span class="text-text-muted text-xs">PNG, JPG hasta 10 MB · Máx. 30 imágenes</span>
+            <input
+              id="campoImagenes"
+              type="file"
+              accept="image/png,image/jpeg"
+              multiple
+              class="hidden"
+            />
+          </label>
+
+          <div id="listaImagenes" class="mt-4 grid grid-cols-3 gap-3 sm:grid-cols-4"></div>
+        </div>
+      </section>
+
+      <!-- Paso 4: Publicar -->
+      <section data-panel="publicar" class="wizard-panel hidden flex-col gap-6">
+        <div class="bg-surface border-border rounded-2xl border p-6">
+          <div class="border-border mb-5 flex items-center gap-2.5 border-b pb-4">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              class="text-ith-azul"
+            >
+              <line x1="22" y1="2" x2="11" y2="13"></line>
+              <polygon points="22,2 15,22 11,13 2,9"></polygon>
+            </svg>
+            <h2 class="text-ith-azul font-serif text-lg">Revisión final</h2>
+          </div>
+
+          <p class="text-text-muted mb-4 text-sm">
+            Revisa que el título y el contenido estén completos antes de publicar.
+          </p>
+
+          <div class="border-border bg-bg rounded-lg border p-4">
+            <p id="resumenTitulo" class="text-text-main font-serif text-lg leading-snug">
+              Sin título todavía
+            </p>
+            <p id="resumenCuerpo" class="text-text-muted mt-2 text-sm leading-relaxed">
+              Aún no se ha escrito el contenido de la nota.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <div class="flex items-center justify-between">
+        <button
+          id="btnAnterior"
+          type="button"
+          class="border-border text-text-main hover:bg-bg flex items-center gap-2 rounded-lg border bg-transparent px-4 py-2.5 text-sm font-medium transition-all disabled:cursor-not-allowed disabled:opacity-40"
+        >
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            ><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12,19 5,12 12,5"
+            ></polyline></svg
+          >
+          Atrás
+        </button>
+        <button
+          id="btnSiguiente"
+          type="button"
+          class="bg-ith-azul hover:bg-ith-azul-mid flex items-center gap-2 rounded-lg border-none px-5 py-2.5 text-sm font-medium text-white transition-all active:scale-95"
+        >
+          Siguiente
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            ><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12,5 19,12 12,19"
+            ></polyline></svg
+          >
+        </button>
+      </div>
+    </div>
+
+    <aside class="flex flex-col gap-6">
+      <div class="bg-surface border-border rounded-2xl border p-5">
+        <div class="border-border mb-4 flex items-center gap-2 border-b pb-3.5">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            class="text-ith-azul"
+          >
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12,6 12,12 16,14"></polyline>
+          </svg>
+          <h3 class="text-ith-azul font-serif text-base">Estado</h3>
+        </div>
+
+        <dl class="flex flex-col gap-3 text-sm">
+          <div class="flex items-center justify-between">
+            <dt class="text-text-muted">Estado actual</dt>
+            <dd>
+              <span
+                class="bg-ith-naranja/10 text-ith-naranja inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium"
+              >
+                <span class="bg-ith-naranja h-1.5 w-1.5 rounded-full"></span>
+                Borrador
+              </span>
+            </dd>
+          </div>
+          <div class="flex items-center justify-between">
+            <dt class="text-text-muted">Creado por</dt>
+            <dd class="text-text-main font-medium">Luis Beaven</dd>
+          </div>
+          <div class="flex items-center justify-between">
+            <dt class="text-text-muted">Fecha</dt>
+            <dd class="text-text-main font-medium">{fechaHoy}</dd>
+          </div>
+          <div class="flex items-center justify-between">
+            <dt class="text-text-muted">Imágenes</dt>
+            <dd class="text-text-main font-medium"><span id="contadorImagenes">0</span> / 30</dd>
+          </div>
+        </dl>
+      </div>
+
+      <div class="bg-surface border-border rounded-2xl border p-5">
+        <div class="border-border mb-4 flex items-center gap-2 border-b pb-3.5">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            class="text-ith-azul"
+          >
+            <polyline points="9,11 12,14 22,4"></polyline>
+            <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"></path>
+          </svg>
+          <h3 class="text-ith-azul font-serif text-base">Verificación previa</h3>
+        </div>
+
+        <ul class="flex flex-col gap-3 text-sm">
+          <li
+            id="checkTitulo"
+            class="verificacion-item flex items-center gap-2.5"
+            data-estado="pendiente"
+          >
+            <span
+              class="verificacion-icono flex h-4 w-4 shrink-0 items-center justify-center rounded-full"
+            ></span>
+            <span class="verificacion-texto">Título requerido</span>
+          </li>
+          <li
+            id="checkCuerpo"
+            class="verificacion-item flex items-center gap-2.5"
+            data-estado="pendiente"
+          >
+            <span
+              class="verificacion-icono flex h-4 w-4 shrink-0 items-center justify-center rounded-full"
+            ></span>
+            <span class="verificacion-texto">Descripción ¿Qué? requerida</span>
+          </li>
+          <li
+            id="checkImagenes"
+            class="verificacion-item verificacion-item--opcional flex items-center gap-2.5"
+            data-estado="opcional"
+          >
+            <span
+              class="verificacion-icono flex h-4 w-4 shrink-0 items-center justify-center rounded-full"
+            ></span>
+            <span class="verificacion-texto">Imágenes adjuntas (opcional)</span>
+          </li>
+          <li class="verificacion-item flex items-center gap-2.5" data-estado="listo">
+            <span
+              class="verificacion-icono flex h-4 w-4 shrink-0 items-center justify-center rounded-full"
+            ></span>
+            <span class="verificacion-texto">Plantilla ITH activa</span>
+          </li>
+          <li class="verificacion-item flex items-center gap-2.5" data-estado="listo">
+            <span
+              class="verificacion-icono flex h-4 w-4 shrink-0 items-center justify-center rounded-full"
+            ></span>
+            <span class="verificacion-texto">Sesión verificada</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="bg-surface border-border rounded-2xl border p-5">
+        <div class="border-border mb-4 flex items-center gap-2 border-b pb-3.5">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            class="text-ith-azul"
+          >
+            <line x1="22" y1="2" x2="11" y2="13"></line>
+            <polygon points="22,2 15,22 11,13 2,9"></polygon>
+          </svg>
+          <h3 class="text-ith-azul font-serif text-base">Publicar</h3>
+        </div>
+
+        <p class="text-text-muted mb-4 text-xs leading-relaxed">
+          Completa los campos requeridos en los 4 pasos para habilitar la publicación.
+        </p>
+
+        <button
+          id="btnPublicar"
+          type="button"
+          disabled
+          class="bg-ith-verde flex w-full items-center justify-center gap-2 rounded-lg border-none py-2.5 text-sm font-medium text-white transition-all disabled:cursor-not-allowed disabled:opacity-40"
+        >
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            ><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22,2 15,22 11,13 2,9"
+            ></polygon></svg
+          >
+          Publicar publicación
+        </button>
+      </div>
+    </aside>
+  </div>
+
+  <div
+    class="pointer-events-none fixed bottom-6 left-1/2 z-50 flex -translate-x-1/2 translate-y-24 items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium text-white opacity-0 transition-all duration-300"
+    id="toast"
+  >
+  </div>
+</Layout>
+
+<style>
+  /* ── Stepper: círculos y conectores ── */
+  .step-circle {
+    background-color: var(--bg);
+    color: var(--text-muted);
+    border: 2px solid var(--border);
+  }
+  .step-label {
+    color: var(--text-muted);
+  }
+  .step-connector {
+    background-color: var(--border);
+  }
+
+  .step-trigger[data-state='activo'] .step-circle {
+    background-color: var(--ith-azul);
+    border-color: var(--ith-azul);
+    color: #fff;
+  }
+  .step-trigger[data-state='activo'] .step-label {
+    color: var(--ith-azul);
+    font-weight: 600;
+  }
+  .step-trigger[data-state='completo'] .step-circle {
+    background-color: var(--ith-verde);
+    border-color: var(--ith-verde);
+    color: #fff;
+  }
+  .step-trigger[data-state='completo'] .step-label {
+    color: var(--text-main);
+  }
+  li:has(.step-trigger[data-state='completo']) .step-connector {
+    background-color: var(--ith-verde);
+  }
+
+  /* ── Toolbar del editor ── */
+  .toolbar-btn {
+    color: var(--text-muted);
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+  }
+  .toolbar-btn:hover {
+    background-color: var(--surface);
+    color: var(--ith-azul);
+  }
+
+  #campoCuerpo:empty::before {
+    content: attr(data-placeholder);
+    color: var(--text-muted);
+  }
+
+  /* ── Verificación previa: iconos de estado ── */
+  .verificacion-texto {
+    color: var(--text-main);
+  }
+  .verificacion-icono {
+    border: 1.5px solid var(--border);
+  }
+  .verificacion-item[data-estado='listo'] .verificacion-icono {
+    background-color: var(--ith-verde);
+    border-color: var(--ith-verde);
+  }
+  .verificacion-item--opcional .verificacion-texto,
+  .verificacion-item--opcional .verificacion-icono {
+    color: var(--ith-naranja);
+  }
+  .verificacion-item--opcional .verificacion-icono {
+    border-color: var(--ith-naranja);
+  }
+  .verificacion-item[data-estado='completo'] .verificacion-icono {
+    background-color: var(--ith-verde);
+    border-color: var(--ith-verde);
+  }
+</style>
+
+<script>
+  const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T
+
+  const pasosOrden = ['informacion', 'contenido', 'multimedia', 'publicar']
+  let pasoActualIndex = 1 // arranca en "Contenido"
+
+  const stepper = $('wizardStepper')
+  const panels = document.querySelectorAll<HTMLElement>('.wizard-panel')
+  const btnAnterior = $<HTMLButtonElement>('btnAnterior')
+  const btnSiguiente = $<HTMLButtonElement>('btnSiguiente')
+  const btnPublicar = $<HTMLButtonElement>('btnPublicar')
+  const toast = $('toast')
+
+  const campoTitulo = $<HTMLInputElement>('campoTitulo')
+  const contadorTitulo = $('contadorTitulo')
+  const campoCuerpo = $('campoCuerpo')
+  const campoImagenes = $<HTMLInputElement>('campoImagenes')
+  const listaImagenes = $('listaImagenes')
+  const contadorImagenes = $('contadorImagenes')
+  const checkTitulo = $('checkTitulo')
+  const checkCuerpo = $('checkCuerpo')
+  const checkImagenes = $('checkImagenes')
+  const resumenTitulo = $('resumenTitulo')
+  const resumenCuerpo = $('resumenCuerpo')
+
+  let toastTimer: number
+
+  function showToast(mensaje: string, color: 'azul' | 'verde' | 'rojo' = 'azul') {
+    toast.textContent = mensaje
+    toast.className =
+      'fixed bottom-6 left-1/2 z-50 flex -translate-x-1/2 translate-y-24 items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium text-white opacity-0 transition-all duration-300 pointer-events-none'
+
+    const bgClase =
+      color === 'verde' ? 'bg-ith-verde' : color === 'rojo' ? 'bg-ith-rojo' : 'bg-text-main'
+    toast.classList.add(bgClase)
+
+    setTimeout(() => toast.classList.remove('translate-y-24', 'opacity-0'), 10)
+    clearTimeout(toastTimer)
+    toastTimer = window.setTimeout(() => toast.classList.add('translate-y-24', 'opacity-0'), 3000)
+  }
+
+  function renderStepper() {
+    stepper.querySelectorAll<HTMLElement>('.step-trigger').forEach((boton) => {
+      const indice = Number(boton.dataset.index)
+      const estado =
+        indice < pasoActualIndex ? 'completo' : indice === pasoActualIndex ? 'activo' : 'pendiente'
+      boton.dataset.state = estado
+
+      const circulo = boton.querySelector<HTMLElement>('[data-circle]')!
+      const numeroOriginal =
+        boton.dataset.step === pasosOrden[indice] ? String(indice + 1) : circulo.textContent
+      circulo.innerHTML =
+        estado === 'completo'
+          ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20,6 9,17 4,12"></polyline></svg>'
+          : numeroOriginal
+    })
+  }
+
+  function mostrarPanel() {
+    const idActual = pasosOrden[pasoActualIndex]
+    panels.forEach((panel) => {
+      const esActual = panel.dataset.panel === idActual
+      panel.classList.toggle('hidden', !esActual)
+      panel.classList.toggle('flex', esActual)
+    })
+
+    btnAnterior.disabled = pasoActualIndex === 0
+    const esUltimo = pasoActualIndex === pasosOrden.length - 1
+    btnSiguiente.classList.toggle('hidden', esUltimo)
+    btnSiguiente.classList.toggle('flex', !esUltimo)
+
+    if (esUltimo) actualizarResumen()
+  }
+
+  function irAlPaso(indice: number) {
+    pasoActualIndex = Math.max(0, Math.min(indice, pasosOrden.length - 1))
+    renderStepper()
+    mostrarPanel()
+  }
+
+  stepper.addEventListener('click', (evento) => {
+    const boton = (evento.target as HTMLElement).closest<HTMLButtonElement>('.step-trigger')
+    if (!boton) return
+    irAlPaso(Number(boton.dataset.index))
+  })
+
+  btnAnterior.addEventListener('click', () => irAlPaso(pasoActualIndex - 1))
+  btnSiguiente.addEventListener('click', () => irAlPaso(pasoActualIndex + 1))
+
+  campoTitulo.addEventListener('input', () => {
+    contadorTitulo.textContent = String(campoTitulo.value.length)
+    actualizarVerificacion()
+  })
+
+  campoCuerpo.addEventListener('input', actualizarVerificacion)
+
+  document.querySelectorAll<HTMLButtonElement>('.toolbar-btn').forEach((boton) => {
+    boton.addEventListener('click', () => {
+      campoCuerpo.focus()
+      const comando = boton.dataset.cmd ?? ''
+      if (comando.startsWith('formatBlock:')) {
+        document.execCommand('formatBlock', false, comando.split(':')[1])
+      } else {
+        document.execCommand(comando, false)
+      }
+      actualizarVerificacion()
+    })
+  })
+
+  campoImagenes.addEventListener('change', () => {
+    const archivos = Array.from(campoImagenes.files ?? []).slice(0, 30)
+    listaImagenes.innerHTML = ''
+
+    archivos.forEach((archivo) => {
+      const url = URL.createObjectURL(archivo)
+      const miniatura = document.createElement('div')
+      miniatura.className =
+        'border-border aspect-square overflow-hidden rounded-lg border bg-cover bg-center'
+      miniatura.style.backgroundImage = `url(${url})`
+      listaImagenes.appendChild(miniatura)
+    })
+
+    contadorImagenes.textContent = String(archivos.length)
+    actualizarVerificacion()
+
+    if (archivos.length > 0) showToast(`${archivos.length} imagen(es) agregadas`, 'verde')
+  })
+
+  function actualizarVerificacion() {
+    const tituloListo = campoTitulo.value.trim().length > 0
+    const cuerpoListo = campoCuerpo.textContent!.trim().length > 0
+    const imagenesListas = Number(contadorImagenes.textContent) > 0
+
+    checkTitulo.dataset.estado = tituloListo ? 'listo' : 'pendiente'
+    checkCuerpo.dataset.estado = cuerpoListo ? 'listo' : 'pendiente'
+    checkImagenes.classList.toggle('verificacion-item--opcional', !imagenesListas)
+    checkImagenes.dataset.estado = imagenesListas ? 'listo' : 'opcional'
+
+    btnPublicar.disabled = !(tituloListo && cuerpoListo)
+  }
+
+  function actualizarResumen() {
+    resumenTitulo.textContent = campoTitulo.value.trim() || 'Sin título todavía'
+    const textoCuerpo = campoCuerpo.textContent!.trim()
+    resumenCuerpo.textContent = textoCuerpo || 'Aún no se ha escrito el contenido de la nota.'
+  }
+
+  $('btnGuardarBorrador').addEventListener('click', () => showToast('✓ Borrador guardado', 'verde'))
+  $('btnPrevisualizar').addEventListener('click', () =>
+    showToast('Función de previsualización en desarrollo', 'azul'),
+  )
+
+  btnPublicar.addEventListener('click', () => {
+    if (btnPublicar.disabled) return
+    showToast('✓ Publicación creada correctamente', 'verde')
+    setTimeout(() => {
+      window.location.href = '/dashboard'
+    }, 1200)
+  })
+
+  renderStepper()
+  mostrarPanel()
+  actualizarVerificacion()
+</script>

@@ -4,9 +4,15 @@ import TablaUsuarios from '@/components/TablaUsuarios.astro'
 import FormularioNuevoUsuario from '@/components/FormularioNuevoUsuario.astro'
 ---
 
-<Layout title="Usuarios" pageTitle="Usuarios" pageSubtitle="Administra las cuentas del portal ITH">
-  <div class="grid grid-cols-1 items-start gap-6 lg:grid-cols-[1fr_380px]">
-    <TablaUsuarios />
-    <FormularioNuevoUsuario />
-  </div>
+<Layout
+  title="Usuarios"
+  pageTitle="Usuarios"
+  pageSubtitle="Administra las cuentas del portal ITH"
+>
+  <main class="mx-auto max-w-7xl px-6 py-10">
+    <div class="grid grid-cols-1 items-start gap-6 lg:grid-cols-[1fr_380px]">
+      <TablaUsuarios />
+      <FormularioNuevoUsuario />
+    </div>
+  </main>
 </Layout>

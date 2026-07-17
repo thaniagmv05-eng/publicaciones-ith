@@ -1,0 +1,43 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+enum Rol {
+  ADMIN
+  USER
+}
+model Usuario {
+  Id_Usuario      Int           @id @default(autoincrement())
+  Nombre_Usuario  String        @db.VarChar(50)
+  Correo          String        @unique @db.VarChar(50)
+  Contrasena_Hash String        @db.VarChar(80)
+  Rol             Rol
+
+  publicaciones   Publicacion[]
+}
+
+model Publicacion {
+  Id_Publicacion Int       @id @default(autoincrement())
+  Titulo         String    @db.VarChar(80)
+  Contenido      String    @db.VarChar(1000)
+  Fecha_Creacion DateTime  @default(now())
+  Estado         Int
+  Orden          String?   @db.VarChar(10)
+
+  Id_Usuario     Int
+  usuario Usuario @relation(fields: [Id_Usuario], references: [Id_Usuario], onDelete: Cascade)
+  imagenes       Imagen[]
+}
+
+model Imagen {
+  Id_Imagen      Int    @id @default(autoincrement())
+  Ruta_Archivo   String @db.VarChar(255)
+
+  Id_Publicacion Int
+
+  publicacion Publicacion @relation(fields: [Id_Publicacion],references: [Id_Publicacion],onDelete: Cascade)
+}
