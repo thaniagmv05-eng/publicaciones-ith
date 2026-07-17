@@ -1,22 +1,10 @@
 import { defineMiddleware } from 'astro:middleware'
 
-const VALID_ROUTES = [
-  '/',
-  '/login',
-  '/usuarios',
-  '/estadisticas',
-  '/publicaciones/nueva',
-  '/publicaciones/ordenar',
-  '/tutorial',
-]
-// const PUBLIC_ROUTES = ['/login']
-const PUBLIC_ROUTES = VALID_ROUTES
-export const onRequest = defineMiddleware(({ url, cookies, redirect }, next) => {
-  const isPublic = PUBLIC_ROUTES.includes(url.pathname)
+const PUBLIC_ROUTES = ['/login']
 
-  if (isPublic) return next()
-  if (!VALID_ROUTES.includes(url.pathname)) {
-    return redirect('/')
+export const onRequest = defineMiddleware(({ url, cookies, redirect }, next) => {
+  if (PUBLIC_ROUTES.includes(url.pathname)) {
+    return next()
   }
 
   const session = cookies.get('session')?.value
@@ -24,4 +12,6 @@ export const onRequest = defineMiddleware(({ url, cookies, redirect }, next) => 
   if (!session) {
     return redirect('/login')
   }
+
+  return next()
 })

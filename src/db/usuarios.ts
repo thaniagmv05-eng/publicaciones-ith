@@ -24,7 +24,14 @@ export class UserService {
     return usuario
   }
   static async logIn(correo: string, password: string) {
-    const usuario = await this.getByCorreo(correo)
+    let usuario
+    try {
+      usuario = await UserService.getByCorreo(correo)
+
+      console.log('USUARIO:', usuario)
+    } catch (error) {
+      console.error('ERROR PRISMA:', error)
+    }
     if (!usuario) throw Error('El usuario no existe')
 
     const userData = {

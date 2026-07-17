@@ -17,7 +17,7 @@ const {
 const currentPath = Astro.url.pathname
 
 function isActive(href: string) {
-  if (href === '/dashboard') return currentPath === '/' || currentPath === '/dashboard'
+  if (href === '/') return currentPath === '/' || currentPath === '/'
   return currentPath.startsWith(href)
 }
 ---
